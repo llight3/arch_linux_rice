@@ -1,0 +1,194 @@
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;; Place your private configuration here! Remember, you do not need to run 'doom
+;; sync' after modifying this file!
+
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
+(setq user-full-name "Your name here"
+      user-mail-address "your email here")
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+;;
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+(setq doom-theme 'doom-one)
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/org/")
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type 'relative)
+
+
+;; Here are some additional functions/macros that could help you configure Doom:
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
+
+(use-package quelpa)
+
+(use-package quelpa-use-package
+  :after quelpa)
+
+(use-package matrix-client
+  :after quelpa-use-package
+  :quelpa (matrix-client :fetcher github :repo "alphapapa/matrix-client.el"
+                         :files (:defaults "logo.png" "matrix-client-standalone.el.sh")))
+
+
+;; ;; Install `plz' HTTP library (not on MELPA yet).
+;; (use-package plz
+;;   :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
+;;
+;; ;; Install Ement.
+;; (use-package ement
+;;   :quelpa (ement :fetcher github :repo "alphapapa/ement.el"))
+
+
+;; (use-package! ediprolog
+;;   :config
+;;   (global-set-key [f10] 'ediprolog-dwim))
+;;
+;; (setq prolog-system 'swi)
+
+;; (setq prolog-system 'swi
+;;       prolog-program-switches '((swi ("-G128M" "-T128M" "-L128M" "-O"))
+;;                                 (t nil))
+;;       prolog-electric-if-then-else-flag t)
+
+(use-package etherpad
+        :config (setq etherpad-server "https://scalar.vector.im/api/widgets/etherpad.html"
+                etherpad-apikey "…"
+                etherpad-autosync nil)
+        :bind (("C-c e" . etherpad-edit)
+        :map etherpad-mode-map
+                ("C-c c" . etherpad-save)))
+
+
+(setq +latex-viewers '(zathura))
+(setq org-src-fontify-natively t)
+(setq org-latex-listings 'minted)
+(setq org-latex-packages-alist '(("" "minted")))
+(setq org-latex-pdf-process
+'("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  "xelatex -interaction nonstopmode -output-directory %o %f"
+  "biber %b"
+  "biber %b"
+  "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(with-eval-after-load 'ox-latex (add-to-list 'org-latex-classes
+             '("UoYCSproject"
+               "\\documentclass{UoYCSproject}
+                \\supervisor{Project Supervisor Name}
+                \\BSc"
+               ("\\chapter{%s}" . "\\chapter*{%s}")
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+;;ditaa setup
+(setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa.jar")
+
+;; java setup
+;; (setq lsp-java-workspace-dir "~/embs_assesment/q2/")
+
+
+;; gemini setup
+(setq gnutls-verify-error nil
+      gnutls-algorithm-priority nil
+      gnutls-min-prime-bits nil
+      tls-checktrust nil
+      tls-program '("gnutls-cli --x509cafile %t -p %p %h"
+                    "gnutls-cli --x509cafile %t -p %p %h --protocols ssl3"))
+
+;;(after! latex
+;;  (setq org-latex-listings 'minted)
+;;  org-latex-packages-alist '(("" "minted"))
+;;  org-latex-pdf-process
+;;  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+;;    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+
+;; sagemath
+(require 'sage-shell-mode)
+(custom-set-variables
+	 '(sage-shell:use-prompt-toolkit nil)
+	 '(sage-shell:use-simple-prompt t)
+	 '(sage-shell:set-ipython-version-on-startup nil)
+	 '(sage-shell:check-ipython-version-on-startup nil))
+;;Ob-sagemath supports only evaluating with a session.
+(setq org-babel-default-header-args:sage '((:session . t)
+                                           (:results . "output")))
+
+(after! bibtex-completion
+  (setq! bibtex-completion-bibliography "/home/dark/.config/bibliography/main.bib"
+        bibtex-completion-library-path "/home/dark/books"))
+
+;; C-c c for asynchronous evaluating (only for SageMath code blocks).
+;; (with-eval-after-load "org"
+;;   (define-key org-mode-map (kbd "C-c c") 'ob-sagemath-execute-async))
+
+(setq fancy-splash-image "~/.doom.d/ccru.svg")
+
+(use-package! org-gcal
+  :config
+  (setq org-gcal-client-id "client.id"
+        org-gcal-client-secret "client.secret"
+        org-gcal-fetch-file-alist '(("email" .  "~/org/cal/schedule.org")
+                                    ("cal.id" .  "~/org/cal/york-cal.org")
+                                    ("cal.id" .  "~/org/cal/calcurse.org")
+                                    ("email" .  "~/org/cal/personal.org"))))
+
+(setq org-agenda-files (list "~/org/cal/schedule.org"
+                             "~/org/cal/york-cal.org"
+                             "~/org/cal/calcurse.org"
+                             "~/org/cal/personal.org"))
+
+
+(defun my-open-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-file-source "schedule" "~/org/cal/schedule.org" "Red")  ; other org source
+    (cfw:org-create-file-source "york-cal" "~/org/cal/york-cal.org" "Cyan")  ; other org source
+    (cfw:org-create-file-source "calcurse" "~/org/cal/calcurse.org" "Grey")  ; other org source
+    (cfw:org-create-file-source "personal" "~/org/cal/personal.org" "Orange")  ; other org source
+   )))
+
+
+(add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
